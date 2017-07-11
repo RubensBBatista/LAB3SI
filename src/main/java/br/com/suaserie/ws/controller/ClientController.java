@@ -16,39 +16,33 @@ import br.com.suaserie.ws.service.ClienteService;
 
 @RestController
 public class ClientController {
-	
+
 	@Autowired
 	ClienteService clienteService;
 
 	// End points
 
-	@RequestMapping(method = RequestMethod.POST, value ="/clientes", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.POST, value = "/clientes", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Cliente> cadastrarCliente(@RequestBody Cliente cliente) {
-		
+
 		Cliente clienteCadastrado = clienteService.cadastrar(cliente);
 		return new ResponseEntity<>(clienteCadastrado, HttpStatus.CREATED);
 
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/clientes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Collection<Cliente>> getAllCliente() {
 
-		Collection<Cliente> allClientes = clienteService.getClientes();
-		return new ResponseEntity<>(allClientes, HttpStatus.OK);
+		return new ResponseEntity<>(clienteService.getClientes(), HttpStatus.OK);
 
 	}
 	
-	@RequestMapping(method = RequestMethod.DELETE, value ="/clientes/{id}")
-	public ResponseEntity<Cliente> removerCliente(@PathVariable Integer id) {
-		
-		Cliente clienteEncontrado = clienteService.getPorId(id);
-		if(clienteEncontrado == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		clienteService.remover(clienteEncontrado);
+	@RequestMapping(method = RequestMethod.DELETE, value = "/clientes/{id}")
+	public ResponseEntity<Cliente> deletarCliente(@PathVariable Long id) {
+
+		clienteService.remover(id);
 		return new ResponseEntity<>(HttpStatus.OK);
 		
-
 	}
 
 }
