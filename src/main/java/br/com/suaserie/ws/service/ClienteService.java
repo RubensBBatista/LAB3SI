@@ -24,9 +24,14 @@ public class ClienteService {
 		return clienteRepository.findAll();
 	}
 	
-	public void remover(Long id) {
+	public boolean remover(Long id) {
 		
-		clienteRepository.delete(id);
+		if(clienteRepository.exists(id)) {
+			clienteRepository.delete(id);	
+			return true;
+		}
+		return false;
+		
 		
 	}
 

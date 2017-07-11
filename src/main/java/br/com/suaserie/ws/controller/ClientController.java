@@ -39,9 +39,12 @@ public class ClientController {
 	
 	@RequestMapping(method = RequestMethod.DELETE, value = "/clientes/{id}")
 	public ResponseEntity<Cliente> deletarCliente(@PathVariable Long id) {
-
-		clienteService.remover(id);
-		return new ResponseEntity<>(HttpStatus.OK);
+		
+		if(clienteService.remover(id)) {
+			return new ResponseEntity<>(HttpStatus.OK);			
+		}
+		
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);	
 		
 	}
 
