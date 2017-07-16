@@ -35,4 +35,14 @@ public class ClienteService {
 		
 	}
 
+	public Cliente getClientesPorId(Long id) {
+		
+		Cliente clienteEncontrado = clienteRepository.findOne(id);
+		if(clienteEncontrado != null) {
+			return clienteEncontrado;
+		}
+		return new Cliente();
+		
+	}
+
 }

@@ -1,10 +1,14 @@
 package br.com.suaserie.ws.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity(name = "user")
@@ -20,6 +24,10 @@ public class Cliente {
 	private String login;
 	@Column
 	private String password;
+	@OneToMany
+	private List<Serie> meuPerfil;
+	@OneToMany
+	private List<Serie> watchlist;
 
 	public Long getId() {
 		return id;
@@ -52,4 +60,50 @@ public class Cliente {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	public void addNoPerfil(Serie serie) {
+		if(meuPerfil == null) {
+			meuPerfil = new ArrayList<>();
+		}
+		meuPerfil.add(serie);
+	}
+	
+	public void addWatchList(Serie serie) {
+		if(watchlist == null) {
+			watchlist = new ArrayList<>();
+		}
+		watchlist.add(serie);
+		
+	}
+	
+
+	public List<Serie> getMeuPerfil() {
+		return meuPerfil;
+	}
+
+	public void setMeuPerfil(List<Serie> meuPerfil) {
+		this.meuPerfil = meuPerfil;
+	}
+
+	public List<Serie> getWatchlist() {
+		return watchlist;
+	}
+
+	public void setWatchlist(List<Serie> watchlist) {
+		this.watchlist = watchlist;
+	}
+
+	public void removerSeriePerfil(Serie serie) {
+		meuPerfil.remove(serie);
+		
+	}
+
+	public void removerSerieWatchList(Serie serie) {
+		watchlist.remove(serie);
+		
+	}
+
+	
+	
+
 }

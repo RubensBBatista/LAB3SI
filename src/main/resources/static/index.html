@@ -30,7 +30,6 @@
      			 <li><a href="#home" data-toggle="tab">Página Inicial</a></li>
      			 <li class="active"><a href="#minhasSeries" data-toggle="tab">Meu Perfil</a></li>
      			 <li><a href="#watchlist" data-toggle="tab">Watchlist</a></li>
-     			 <li><button type="button" class="btn btn-info btn" data-toggle="modal" data-target="#modalCadastro">Cadastrar</button></li>
      			 <li><img src="icons/tvicon.png"></li>
      			 <form class="navbar-form navbar-left">
   					<div class="input-group">
@@ -42,6 +41,8 @@
    					    </div>
   					</div>
 				</form>
+				<li ng-show="true"><button type="button" class="btn btn-default btn" data-toggle="modal" data-target="#modalCadastro">Login</button></li>
+     			<li ng-show="false"><a href="#minhasSeries" data-toggle="tab">Rubens</a></li>
    				</ul>
    				
  	 		</div>
@@ -183,7 +184,7 @@
 						<div class="form-group">
 						  <label class="col-md-4 control-label" for="idNome">Nome</label>  
 						  <div class="col-md-5">
-						  <input ng-model="idNome" type="text" placeholder="Informe seu nome" class="form-control input-md" required="">
+						  <input ng-model="idNome" type="text" placeholder="Informe seu nome" class="form-control input-md" required/>
 						    
 						  </div>
 						</div>
@@ -192,7 +193,7 @@
 						<div class="form-group">
 						  <label class="col-md-4 control-label" for="idUsuario">Usuário</label>  
 						  <div class="col-md-5">
-						  <input ng-model="idLogin" type="text" placeholder="Informe seu login" class="form-control input-md" required="">
+						  <input ng-model="idLogin" type="text" placeholder="Informe seu login" class="form-control input-md" required/>
 						    
 						  </div>
 						</div>
@@ -201,7 +202,7 @@
 						<div class="form-group">
 						  <label class="col-md-4 control-label" for="idSenha">Senha</label>
 						  <div class="col-md-5">
-						    <input ng-model="idSenha" type="password" placeholder="Informe sua senha" class="form-control input-md" required="">
+						    <input ng-model="idSenha" type="password" placeholder="Informe sua senha" class="form-control input-md" required/>
 						    
 						  </div>
 						</div>
@@ -210,7 +211,7 @@
 						<div class="form-group">
 						  <label class="col-md-4 control-label" for="idConfirmar"></label>
 						  <div class="col-md-8">
-						    <button class="btn btn-primary" ng-click="cadastraCliente(idNome,idLogin,idSenha)">confirmar</button>
+						    <button ng-disabled="!idNome || !idLogin || !idSenha" class="btn btn-primary" ng-click="cadastraCliente(idNome,idLogin,idSenha)">Confirmar</button>
 						  </div>
 						</div>
 
@@ -219,7 +220,7 @@
 
       		    </div>
       		    <div class="modal-footer">
-      		      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      		      <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
      		    </div>
    		        </div>
 

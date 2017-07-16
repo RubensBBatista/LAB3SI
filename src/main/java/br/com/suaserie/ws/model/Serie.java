@@ -92,5 +92,30 @@ public class Serie {
 	public void setLinkIMG(String linkIMG) {
 		this.linkIMG = linkIMG;
 	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((titulo == null) ? 0 : titulo.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Serie other = (Serie) obj;
+		if (this.titulo == null) {
+			if (other.titulo != null)
+				return false;
+		} else if (!this.titulo.equals(other.titulo))
+			return false;
+		return true;
+	}
 
 }

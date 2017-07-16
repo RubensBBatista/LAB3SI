@@ -81,7 +81,7 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
   		serie.lastEpisode = ep;
   	};
   	
-  	$scope.getClientes = function(){
+  	var getClientes = function(){
   		$http({
   	  	  method: 'GET',
   	  	  url: 'http://localhost:8080/clientes'
@@ -93,11 +93,11 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
   	  	  });
   	};
   	
-  	$scope.cadastraCliente = function(name,e,s){
+  	$scope.cadastraCliente = function(idNome,idLogin,idSenha){
   		$http({
   	  	  method: 'POST',
   	  	  url: 'http://localhost:8080/clientes',
-  	  	  data: { nome : name, login : e , password : s}	
+  	  	  data: { nome : idNome, login : idLogin , password : idSenha}	
   	  	}).then(function successCallback(response) {
   	  		console.log(response.data);
   	  	  }, function errorCallback(response) {
@@ -105,7 +105,7 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
   	  	  });
   	};
   	
-  	$scope.getClientes();
+  	getClientes();
   	
   	
   	

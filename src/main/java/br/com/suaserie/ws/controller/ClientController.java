@@ -37,6 +37,16 @@ public class ClientController {
 
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/clientes/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Cliente> getClientById(@PathVariable Long id) {
+		
+		if(clienteService.getClientesPorId(id).getNome() != null) {
+			return new ResponseEntity<>(clienteService.getClientesPorId(id), HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+	}
+	
 	@RequestMapping(method = RequestMethod.DELETE, value = "/clientes/{id}")
 	public ResponseEntity<Cliente> deletarCliente(@PathVariable Long id) {
 		
