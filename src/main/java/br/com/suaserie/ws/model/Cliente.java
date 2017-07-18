@@ -65,7 +65,12 @@ public class Cliente {
 		if(meuPerfil == null) {
 			meuPerfil = new ArrayList<>();
 		}
-		meuPerfil.add(serie);
+		int indice = meuPerfil.indexOf(serie);
+		if(indice != -1) {
+			meuPerfil.set(indice,serie );
+		}else {
+			meuPerfil.add(serie);			
+		}
 	}
 	
 	public void addWatchList(Serie serie) {
@@ -93,13 +98,23 @@ public class Cliente {
 		this.watchlist = watchlist;
 	}
 
-	public void removerSeriePerfil(Serie serie) {
-		meuPerfil.remove(serie);
-		
+
+	public boolean removerSeriePerfilID(String id2) {
+		for(Serie serie : meuPerfil) {
+			if(serie.getImdbID().equals(id2)) {
+				return meuPerfil.remove(serie);
+			}
+		}
+		return false;
 	}
 
-	public void removerSerieWatchList(Serie serie) {
-		watchlist.remove(serie);
+	public boolean removerSerieWatchlistID(String id2) {
+		for(Serie serie : watchlist) {
+			if(serie.getImdbID().equals(id2)) {
+				return watchlist.remove(serie);
+			}
+		}
+		return false;
 		
 	}
 

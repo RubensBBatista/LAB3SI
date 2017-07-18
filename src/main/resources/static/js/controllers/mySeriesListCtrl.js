@@ -18,10 +18,20 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
 	};
 	
 	$scope.addSerie = function(serie){
+		if(!$scope.hasLogado()){
+			alert("Você precisa estar logado para adicionar séries ao seu perfil!");
+		}else{
+			$scope.addToPerfil(serie);
+		}
+	}
+	
+	$scope.addToPerfil = function(serie){
 		nomeserie = $scope.convertToAcceptAtt(serie);
 		if(contains($scope.mySeries,nomeserie) == -1){
 			var promise = seriesAPI.getFullSeriesAPI(nomeserie).then(function(response){
+				var descricao = (response.data.Plot).substring(0,220) + "...";
 				var serieadd = $scope.convertToAcceptAtt(response.data);
+				serieadd.plot = descricao;
      			$scope.mySeries.push(serieadd);
      			$scope.salvarNoPerfil(serieadd);
      		}).catch(function(error){
@@ -33,6 +43,7 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
 		index_contains = contains($scope.watchlist,nomeserie);
 		if(index_contains != -1){
 			$scope.watchlist.splice(index_contains,1);
+			$scope.removerDaWatchlist(nomeserie);
 		};
 		
 	};
@@ -43,11 +54,18 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
 			var pos = $scope.mySeries.indexOf(serie);
 			$scope.mySeries.splice(pos,1);
 			$scope.removerDoPerfil(serie);
-			
 		};
 	};
-
+	
 	$scope.watchlistAdd = function(serie){
+		if(!$scope.hasLogado()){
+			alert("Você precisa estar logado para adicionar séries a sua watchlist!");
+		}else{
+			$scope.addToWatchlist(serie);
+		}
+	}
+
+	$scope.addToWatchlist = function(serie){
 		nomeserie = $scope.convertToAcceptAtt(serie);
 		if(contains($scope.mySeries,nomeserie) != -1){
 			alert("Você não pode adicionar essa série na sua watchlist pois ela já está no seu perfil");
@@ -77,11 +95,13 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
   	};
 
   	$scope.setMyRating = function(serie,nota){
-  		serie.myRating = nota; 		
+  		serie.myRating = nota;
+  		$scope.salvarNoPerfil(serie);
   	};
 
   	$scope.setLastEpisode = function(serie,ep){
   		serie.lastEpisode = ep;
+  		$scope.salvarNoPerfil(serie);
   	};
   	
   	$scope.hasLogado = function(){
@@ -92,7 +112,17 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
   		$scope.userLogado = null;
   		$scope.mySeries = [];
   		$scope.watchlist = [];
+  	};
+  	
+ 	$scope.hasSeriesOnPerf = function(){
+  		return $scope.mySeries.length > 0;
   	}
+  	
+  	$scope.hasSeriesOnWatch = function(){
+  		return $scope.watchlist.length > 0;
+  	}
+  	
+  	
   	
   	$scope.autenticarCliente = function(idLogin,idSenha){
   		$http({
@@ -171,16 +201,39 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
   	$scope.removerDoPerfil = function(serie){
   		$http({
   	  	  method: 'DELETE',
-  	  	  url: 'http://localhost:8080/cliente/removerPerfil/' + $scope.userLogado.id,
-  	  	  data: {imdbID: serie.imdbID}
+  	  	  url: 'http://localhost:8080/cliente/removerPerfil/' 
+  	  		  + $scope.userLogado.id + "/" + serie.imdbID,
   	  	}).then(function successCallback(response) {
   	  	  }, function errorCallback(response) {
-  	  		 console.log(serie);
+  	  		 console.log("Deu erro na remocao do perfil");
+  	  	  });
+
+  	}
+  	
+  	$scope.removerDaWatchlist = function(serie){
+  		$http({
+  	  	  method: 'DELETE',
+  	  	  url: 'http://localhost:8080/cliente/removerWatchList/' 
+  	  		  + $scope.userLogado.id + "/" + serie.imdbID,
+  	  	}).then(function successCallback(response) {
+  	  	  }, function errorCallback(response) {
+  	  		 console.log("Deu erro na remocao do perfil");
+  	  	  });
+
+  	}
+  	
+  	$scope.removerCliente = function(id){
+  		$http({
+  	  	  method: 'DELETE',
+  	  	  url: 'http://localhost:8080/clientes/' + id,
+  	  	}).then(function successCallback(response) {
+  	  	  }, function errorCallback(response) {
   	  		 console.log("Deu erro na remocao do perfil");
   	  	  });
 
   	}
 
+  	
   	$scope.convertToAcceptAtt = function(serie){
   		var retorno = {
                  imdbRating: serie.imdbRating,

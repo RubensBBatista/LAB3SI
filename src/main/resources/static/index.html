@@ -48,14 +48,14 @@
 							</div>
 						</div>
 					</form>
-					<li ng-show="!hasLogado()"><button type="button"
+					<li id="entrarCadastrar" ng-show="!hasLogado()"><button type="button"
 							class="btn btn-default btn" data-toggle="modal"
 							data-target="#modalLogin">Entrar</button></li>
-					<li ng-show="!hasLogado()"><button type="button"
+					<li id="entrarCadastrar" ng-show="!hasLogado()"><button type="button"
 							class="btn btn-default btn" data-toggle="modal"
 							data-target="#modalCadastro">Cadastrar</button></li>
-					<li ng-show="hasLogado()"><div class="btn-group">
-							<button type="button" class="btn btn-default">{{userLogado.nome}}</button>
+					<li id="entrarCadastrar" ng-show="hasLogado()"><div class="btn-group">
+							<button type="button" class="btn btn-default">{{"Olá " + userLogado.nome}}</button>
 							<button type="button" class="btn btn-default dropdown-toggle"
 								data-toggle="dropdown">
 								<span class="caret"></span>
@@ -99,9 +99,11 @@
 			<!-- Minhas Series -->
 
 			<div id="minhasSeries" class="tab-pane in active">
-				<div id="infoicon">
+				<div id="infoicon" ng-show="hasLogado()">
 					<img src="icons/meuperfil.png">
 				</div>
+				<h1 ng-if="!hasLogado()" class="naoencontrou">Logue para ver as séries que você acompanha.</h1>
+				<h1 ng-if="hasLogado() && !hasSeriesOnPerf()" class="naoencontrou">Você ainda não acompanha nenhuma série :(</h1>		
 				<md-list-item ng-repeat="serie in mySeries">
 				<div class="col-lg-3">
 					<div class="hoverzoom">
@@ -129,17 +131,17 @@
 						<div class="modal-content">
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
-								<h4 class="modal-title alinhacentro">{{serie.Title}}</h4>
+								<h4 class="modal-title alinhacentro">{{serie.title}}</h4>
 							</div>
 							<div class="modal-body">
 								<div class="row">
 									<div class="col-md-4">
 										<img id="imagesize"
-											src="{{serie.Poster !== 'N/A' ? serie.Poster:'https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg'}}"
+											src="{{serie.poster !== 'N/A' ? serie.poster:'https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg'}}"
 											alt="Lights">
 									</div>
 									<div class="col-md-8 sinopse">
-										<p>{{serie.Plot}}</p>
+										<p>{{serie.plot}}</p>
 									</div>
 									<div class="col-md-8 info">
 										<img class="infoicons" src="icons/imdb3.png">
@@ -148,7 +150,7 @@
 										</p>
 										<img class="infoicons" src="icons/imdbrated.png">
 										<p>
-											<b>Classificação Indicativa:</b> {{serie.Rated}}
+											<b>Classificação Indicativa:</b> {{serie.rated}}
 										</p>
 										<div class="input-group input">
 											<input ng-model="nota" type="text" class="form-control"
@@ -196,9 +198,11 @@
 			<!-- Watchlist -->
 
 			<div id="watchlist" class="tab-pane">
-				<div id="infoicon">
+				<div id="infoicon" ng-show="hasLogado()">
 					<img src="icons/watchlist.png">
 				</div>
+				<h1 ng-if="!hasLogado()" class="naoencontrou">Logue para ver as séries que você deseja assistir.</h1>	
+				<h1 ng-if="hasLogado() && !hasSeriesOnWatch()" class="naoencontrou">Nenhuma ainda :(</h1>
 				<md-list-item ng-repeat="serie in watchlist">
 				<div class="col-lg-3">
 					<div class="hoverzoom">
