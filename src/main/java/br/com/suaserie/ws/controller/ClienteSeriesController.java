@@ -26,29 +26,31 @@ public class ClienteSeriesController {
 	SerieService serieService;
 	
 	
-	@RequestMapping(method = RequestMethod.POST, value = "perfil/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> cadastrarSerieNoPerfil(@RequestBody Serie serie, @PathVariable("id") Long id) {
+	@RequestMapping(method = RequestMethod.POST, value = "perfil/{id}", 
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Serie> cadastrarSerieNoPerfil(@RequestBody Serie serie, @PathVariable("id") Long id) {
 		
 		Serie cadastrada = serieService.cadastrarSerie(serie);
 		Cliente clienteEncontrado = clienteService.getClientesPorId(id);
 		clienteEncontrado.addNoPerfil(cadastrada);
 		clienteService.cadastrar(clienteEncontrado);
-		return new ResponseEntity<>(serie.getTitulo() + " adicionado no seu perfil", HttpStatus.CREATED);
+		return new ResponseEntity<>(cadastrada, HttpStatus.CREATED);
 
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "watchlist/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<String> cadastrarSerieNaWatchList(@RequestBody Serie serie, @PathVariable("id") Long id) {
+	public ResponseEntity<Serie> cadastrarSerieNaWatchList(@RequestBody Serie serie, @PathVariable("id") Long id) {
 		
 		Serie cadastrada = serieService.cadastrarSerie(serie);
 		Cliente clienteEncontrado = clienteService.getClientesPorId(id);
 		clienteEncontrado.addWatchList(cadastrada);
 		clienteService.cadastrar(clienteEncontrado);
-		return new ResponseEntity<>(serie.getTitulo() + " adicionado na sua watchlist", HttpStatus.CREATED);
+		return new ResponseEntity<>(cadastrada, HttpStatus.CREATED);
 
 	}
 	
-	@RequestMapping(method = RequestMethod.DELETE, value = "/removerPerfil/{id}")
+	@RequestMapping(method = RequestMethod.DELETE, value = "removerPerfil/{id}")
 	public ResponseEntity<Serie> deletarDoPerfil(@RequestBody Serie serie, @PathVariable("id") Long id) {
 		
 		Cliente clienteEncontrado = clienteService.getClientesPorId(id);
@@ -58,7 +60,7 @@ public class ClienteSeriesController {
 		
 	}
 	
-	@RequestMapping(method = RequestMethod.DELETE, value = "/removerWatchList/{id}")
+	@RequestMapping(method = RequestMethod.DELETE, value = "removerWatchList/{id}")
 	public ResponseEntity<Serie> deletarDaWatchList(@RequestBody Serie serie, @PathVariable("id") Long id) {
 		
 		Cliente clienteEncontrado = clienteService.getClientesPorId(id);

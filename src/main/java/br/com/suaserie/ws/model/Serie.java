@@ -15,19 +15,29 @@ public class Serie {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	@Column
-	private String titulo;
+	private String title;
 	@Column
 	private String plot;
 	@Column
-	private String notaIMdb;
+	private String imdbRating;
 	@Column
-	private String classificacaoIMdb;
+	private String rated;
 	@Column
-	private String userNota;
+	private String myRating;
 	@Column
-	private String ultimoEPVisto;
+	private String lastEpisode;
 	@Column
-	private String linkIMG;
+	private String poster;
+	@Column
+	private String imdbID;
+	
+	public String getImdbID() {
+		return imdbID;
+	}
+
+	public void setImdbID(String imdbID) {
+		this.imdbID = imdbID;
+	}
 
 	public long getId() {
 		return id;
@@ -36,13 +46,14 @@ public class Serie {
 	public void setId(long id) {
 		this.id = id;
 	}
+	
 
-	public String getTitulo() {
-		return titulo;
+	public String getTitle() {
+		return title;
 	}
 
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public String getPlot() {
@@ -53,51 +64,51 @@ public class Serie {
 		this.plot = plot;
 	}
 
-	public String getNotaIMdb() {
-		return notaIMdb;
+	public String getImdbRating() {
+		return imdbRating;
 	}
 
-	public void setNotaIMdb(String notaIMdb) {
-		this.notaIMdb = notaIMdb;
+	public void setImdbRating(String imdbRating) {
+		this.imdbRating = imdbRating;
 	}
 
-	public String getClassificacaoIMdb() {
-		return classificacaoIMdb;
+	public String getRated() {
+		return rated;
 	}
 
-	public void setClassificacaoIMdb(String classificacaoIMdb) {
-		this.classificacaoIMdb = classificacaoIMdb;
+	public void setRated(String rated) {
+		this.rated = rated;
 	}
 
-	public String getUserNota() {
-		return userNota;
+	public String getMyRating() {
+		return myRating;
 	}
 
-	public void setUserNota(String userNota) {
-		this.userNota = userNota;
+	public void setMyRating(String myRating) {
+		this.myRating = myRating;
 	}
 
-	public String getUltimoEPVisto() {
-		return ultimoEPVisto;
+	public String getLastEpisode() {
+		return lastEpisode;
 	}
 
-	public void setUltimoEPVisto(String ultimoEPVisto) {
-		this.ultimoEPVisto = ultimoEPVisto;
+	public void setLastEpisode(String lastEpisode) {
+		this.lastEpisode = lastEpisode;
 	}
 
-	public String getLinkIMG() {
-		return linkIMG;
+	public String getPoster() {
+		return poster;
 	}
 
-	public void setLinkIMG(String linkIMG) {
-		this.linkIMG = linkIMG;
+	public void setPoster(String poster) {
+		this.poster = poster;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((titulo == null) ? 0 : titulo.hashCode());
+		result = prime * result + ((imdbID == null) ? 0 : imdbID.hashCode());
 		return result;
 	}
 
@@ -110,10 +121,10 @@ public class Serie {
 		if (getClass() != obj.getClass())
 			return false;
 		Serie other = (Serie) obj;
-		if (this.titulo == null) {
-			if (other.titulo != null)
+		if (this.imdbID == null) {
+			if (other.imdbID != null)
 				return false;
-		} else if (!this.titulo.equals(other.titulo))
+		} else if (!this.imdbID.equals(other.imdbID))
 			return false;
 		return true;
 	}

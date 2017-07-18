@@ -1,51 +1,72 @@
 <!DOCTYPE html>
 <html lang="pt-br" ng-app="mySeriesList">
 <head>
-	<meta charset="utf-8">
-	<title>Sua Série!</title>
-	<link rel="stylesheet" type="text/css" href="css/app.css">
-	<link rel="stylesheet" type="text/css" href="lib/bootstrap/bootstrap.min.css">
-	<link href="https://fonts.googleapis.com/css?family=Open+Sans|PT+Sans" rel="stylesheet">
-	<script src="lib/angular/angular.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
-	<script src="js/app.js"></script>
-	<script src="js/services/seriesAPIService.js"></script>
-	<script src="js/controllers/mySeriesListCtrl.js"></script>
-	<script src="lib/jquery/jquery-3.2.1.min.js"></script>
-	<script src="lib/bootstrap/bootstrap.min.js"></script>
-	
+<meta charset="utf-8">
+<title>Sua Série!</title>
+<link rel="stylesheet" type="text/css" href="css/app.css">
+<link rel="stylesheet" type="text/css"
+	href="lib/bootstrap/bootstrap.min.css">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|PT+Sans"
+	rel="stylesheet">
+<script src="lib/angular/angular.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+<script src="js/app.js"></script>
+<script src="js/services/seriesAPIService.js"></script>
+<script src="js/controllers/mySeriesListCtrl.js"></script>
+<script src="lib/jquery/jquery-3.2.1.min.js"></script>
+<script src="lib/bootstrap/bootstrap.min.js"></script>
+
 </head>
 <body class="corpo" ng-controller="mySeriesListCtrl">
-	
+
 	<div class="container">
 
 		<!-- Barra de navegacao -->
 
 		<nav class="navbar navbar-inverse">
-  			<div class="container-fluid">
-    			<div class="navbar-header">
-     			 <div class="applogo"><img src="icons/applogo.png"></div>
-    			</div>
-    			<ul class="nav navbar-nav">
-     			 <li><a href="#home" data-toggle="tab">Página Inicial</a></li>
-     			 <li class="active"><a href="#minhasSeries" data-toggle="tab">Meu Perfil</a></li>
-     			 <li><a href="#watchlist" data-toggle="tab">Watchlist</a></li>
-     			 <li><img src="icons/tvicon.png"></li>
-     			 <form class="navbar-form navbar-left">
-  					<div class="input-group">
-    					<input ng-model="filter" type="text" class="form-control" placeholder="Pesquisar Séries">
-    					<div class="input-group-btn">
-    					  <button class="btn btn-default" type="submit" data-toggle="tab" data-target="#home" ng-click="getSeries(filter)">
-    		   				 <i><img class="searchicon" src="icons/searchicon.png"></i>
-    		 			  </button>
-   					    </div>
-  					</div>
-				</form>
-				<li ng-show="true"><button type="button" class="btn btn-default btn" data-toggle="modal" data-target="#modalCadastro">Login</button></li>
-     			<li ng-show="false"><a href="#minhasSeries" data-toggle="tab">Rubens</a></li>
-   				</ul>
-   				
- 	 		</div>
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<div class="applogo">
+						<img src="icons/applogo.png">
+					</div>
+				</div>
+				<ul class="nav navbar-nav">
+					<li><a href="#home" data-toggle="tab">Página Inicial</a></li>
+					<li class="active"><a href="#minhasSeries" data-toggle="tab">Meu
+							Perfil</a></li>
+					<li><a href="#watchlist" data-toggle="tab">Watchlist</a></li>
+					<form class="navbar-form navbar-left">
+						<div class="input-group">
+							<input ng-model="filter" type="text" class="form-control"
+								placeholder="Pesquisar Séries">
+							<div class="input-group-btn">
+								<button class="btn btn-default" type="submit" data-toggle="tab"
+									data-target="#home" ng-click="getSeries(filter)">
+									<i><img class="searchicon" src="icons/searchicon.png"></i>
+								</button>
+							</div>
+						</div>
+					</form>
+					<li ng-show="!hasLogado()"><button type="button"
+							class="btn btn-default btn" data-toggle="modal"
+							data-target="#modalLogin">Entrar</button></li>
+					<li ng-show="!hasLogado()"><button type="button"
+							class="btn btn-default btn" data-toggle="modal"
+							data-target="#modalCadastro">Cadastrar</button></li>
+					<li ng-show="hasLogado()"><div class="btn-group">
+							<button type="button" class="btn btn-default">{{userLogado.nome}}</button>
+							<button type="button" class="btn btn-default dropdown-toggle"
+								data-toggle="dropdown">
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li><a ng-click="deslogar()">Sair</a></li>
+							</ul>
+						</div></li>
+				</ul>
+
+			</div>
 		</nav>
 
 		<div class="tab-content">
@@ -53,20 +74,25 @@
 			<!-- Lista de series pesquisadas -->
 
 			<div id="home" class="tab-pane">
-				<h1 ng-if="pesquisado()" class="naoencontrou">Nenhum Resultado D:</h1>
-				<md-list-item ng-repeat= "serie in series" >
-					<div class="col-lg-3">
-						<div class="hoverzoom">
-							<div id="thumbsize" class="thumbnail grow">
-								<img id="imagesize" src="{{serie.Poster !== 'N/A' ? serie.Poster:'https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg'}}" alt="Lights">								
-								<div class="retina">
-									<p>{{serie.Title}}</p>									
-									<button class="btn btn-primary btn-block" ng-click="addSerie(serie)">Add ao Meu Perfil</button>
-									<button class="btn btn-warning btn-block" ng-click="watchlistAdd(serie)">Add a Watchlist</button>
-								</div>	
-    						</div>
-    					</div>
-					</div>					
+				<h1 ng-if="pesquisado()" class="naoencontrou">Nenhum Resultado
+					D:</h1>
+				<md-list-item ng-repeat="serie in series">
+				<div class="col-lg-3">
+					<div class="hoverzoom">
+						<div id="thumbsize" class="thumbnail grow">
+							<img id="imagesize"
+								src="{{serie.Poster !== 'N/A' ? serie.Poster:'https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg'}}"
+								alt="Lights">
+							<div class="retina">
+								<p>{{serie.Title}}</p>
+								<button class="btn btn-primary btn-block"
+									ng-click="addSerie(serie)">Add ao Meu Perfil</button>
+								<button class="btn btn-warning btn-block"
+									ng-click="watchlistAdd(serie)">Add a Watchlist</button>
+							</div>
+						</div>
+					</div>
+				</div>
 				</md-list-item>
 			</div>
 
@@ -74,75 +100,96 @@
 
 			<div id="minhasSeries" class="tab-pane in active">
 				<div id="infoicon">
-					<img src="icons/meuperfil.png">	
-				</div>	
-				<md-list-item ng-repeat= "serie in mySeries">
-					<div class="col-lg-3">
-						<div class="hoverzoom">
-							<div id="thumbsize" class="thumbnail grow">
-								<img id="imagesize" src="{{serie.Poster !== 'N/A' ? serie.Poster:'https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg'}}" alt="Lights">
-								<div class="retina">
-									<p>{{serie.Title}}</p>
-									<button type="button" class="btn btn-info btn-block" data-toggle="modal" data-target="#myModal{{$index}}">Sobre</button>
-									<button class="btn btn-danger btn-block" ng-click="mySerieRemove(serie)">Remover Série</button>
-								</div>	
-    						</div>
-    					</div>
+					<img src="icons/meuperfil.png">
+				</div>
+				<md-list-item ng-repeat="serie in mySeries">
+				<div class="col-lg-3">
+					<div class="hoverzoom">
+						<div id="thumbsize" class="thumbnail grow">
+							<img id="imagesize"
+								src="{{serie.poster !== 'N/A' ? serie.poster:'https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg'}}"
+								alt="Lights">
+							<div class="retina">
+								<p>{{serie.title}}</p>
+								<button type="button" class="btn btn-info btn-block"
+									data-toggle="modal" data-target="#myModal{{$index}}">Sobre</button>
+								<button class="btn btn-danger btn-block"
+									ng-click="mySerieRemove(serie)">Remover Série</button>
+							</div>
+						</div>
 					</div>
+				</div>
 
-					<!-- Modal Home -->
+				<!-- Modal Home -->
 
-					<div id="myModal{{$index}}" class="modal fade" role="dialog">
-    					<div class="modal-dialog modal-lg">
-    		
-     		 				<!-- Modal content-->
-      						<div class="modal-content">
-        						<div class="modal-header">
-        		  					<button type="button" class="close" data-dismiss="modal">&times;</button>
-        		  					<h4 class="modal-title alinhacentro">{{serie.Title}}</h4>
-        						</div>
-        						<div class="modal-body">
-        		 				<div class="row">
-        		 					<div class="col-md-4">
-        		 						<img id="imagesize" src="{{serie.Poster !== 'N/A' ? serie.Poster:'https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg'}}" alt="Lights">
-        		 					</div>
-        		 					<div class="col-md-8 sinopse"><p>{{serie.Plot}}</p></div>
-        		 					<div class="col-md-8 info">
-        		 						<img class="infoicons" src="icons/imdb3.png">
-        		 						<p><b>Média no IMDb:</b> {{serie.imdbRating}}</p>
-        		 						<img class="infoicons" src="icons/imdbrated.png">
-        		 						<p><b>Classificação Indicativa:</b> {{serie.Rated}}</p>
-        		 						<div class="input-group input">
-    										<input ng-model="nota" type="text" class="form-control" placeholder="Ex.: 8.5">
-    											<div class="input-group-btn">
-    					 						 <button class="btn btn-basic" type="submit" ng-click="setMyRating(serie,nota)">
-    		   							 			<i>Ok</i>
-    		 			 					 	</button>
-   					   	 					</div>
-  										</div>
-        		 						<img class="infoicons" src="icons/avaliacao.png">
-        		 						<p><b>Sua Avaliação:</b> {{serie.myRating}}</p>
-        		 						<div class="input-group input">
-    										<input ng-model="lastep" type="text" class="form-control" placeholder="Ex.: S01EP05">
-    											<div class="input-group-btn">
-    					 						 <button class="btn btn-basic" type="submit" ng-click="setLastEpisode(serie,lastep)">
-    		   							 			<i>Ok</i>
-    		 			 					 	</button>
-   					   	 					</div>
-  										</div>
-        		 						<img class="infoicons" src="icons/episode.png">
-        		 						<p><b>Último episódio que você viu:</b> {{serie.lastEpisode}}</p>
-        		 					</div>
-       		 					</div>
-        		 				</div>
-        		 				
-        						<div class="modal-footer">
-       		  					<button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-       							</div>
-     		 				</div>
-      
-    					</div>
-  					</div>
+				<div id="myModal{{$index}}" class="modal fade" role="dialog">
+					<div class="modal-dialog modal-lg">
+
+						<!-- Modal content-->
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h4 class="modal-title alinhacentro">{{serie.Title}}</h4>
+							</div>
+							<div class="modal-body">
+								<div class="row">
+									<div class="col-md-4">
+										<img id="imagesize"
+											src="{{serie.Poster !== 'N/A' ? serie.Poster:'https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg'}}"
+											alt="Lights">
+									</div>
+									<div class="col-md-8 sinopse">
+										<p>{{serie.Plot}}</p>
+									</div>
+									<div class="col-md-8 info">
+										<img class="infoicons" src="icons/imdb3.png">
+										<p>
+											<b>Média no IMDb:</b> {{serie.imdbRating}}
+										</p>
+										<img class="infoicons" src="icons/imdbrated.png">
+										<p>
+											<b>Classificação Indicativa:</b> {{serie.Rated}}
+										</p>
+										<div class="input-group input">
+											<input ng-model="nota" type="text" class="form-control"
+												placeholder="Ex.: 8.5">
+											<div class="input-group-btn">
+												<button class="btn btn-basic" type="submit"
+													ng-click="setMyRating(serie,nota)">
+													<i>Ok</i>
+												</button>
+											</div>
+										</div>
+										<img class="infoicons" src="icons/avaliacao.png">
+										<p>
+											<b>Sua Avaliação:</b> {{serie.myRating}}
+										</p>
+										<div class="input-group input">
+											<input ng-model="lastep" type="text" class="form-control"
+												placeholder="Ex.: S01EP05">
+											<div class="input-group-btn">
+												<button class="btn btn-basic" type="submit"
+													ng-click="setLastEpisode(serie,lastep)">
+													<i>Ok</i>
+												</button>
+											</div>
+										</div>
+										<img class="infoicons" src="icons/episode.png">
+										<p>
+											<b>Último episódio que você viu:</b> {{serie.lastEpisode}}
+										</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default"
+									data-dismiss="modal">Fechar</button>
+							</div>
+						</div>
+
+					</div>
+				</div>
 				</md-list-item>
 			</div>
 
@@ -150,86 +197,169 @@
 
 			<div id="watchlist" class="tab-pane">
 				<div id="infoicon">
-					<img src="icons/watchlist.png">	
+					<img src="icons/watchlist.png">
 				</div>
-				<md-list-item ng-repeat= "serie in watchlist" >
-					<div class="col-lg-3">
-						<div class="hoverzoom">
-							<div id="thumbsize" class="thumbnail grow">
-								<img id="imagesize" src="{{serie.Poster !== 'N/A' ? serie.Poster:'https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg'}}" alt="Lights">
-								<div class="retina">
-									<p>{{serie.Title}}</p>
-									<button class="btn btn-primary btn-block" ng-click="addSerie(serie)">Add ao Meu Perfil</button>
-								</div>	
-    						</div>
-    					</div>
+				<md-list-item ng-repeat="serie in watchlist">
+				<div class="col-lg-3">
+					<div class="hoverzoom">
+						<div id="thumbsize" class="thumbnail grow">
+							<img id="imagesize"
+								src="{{serie.poster !== 'N/A' ? serie.poster:'https://upload.wikimedia.org/wikipedia/commons/6/64/Poster_not_available.jpg'}}"
+								alt="Lights">
+							<div class="retina">
+								<p>{{serie.Title}}</p>
+								<button class="btn btn-primary btn-block"
+									ng-click="addSerie(serie)">Add ao Meu Perfil</button>
+							</div>
+						</div>
 					</div>
+				</div>
 				</md-list-item>
 			</div>
 
 			<!-- Modal Cadastro -->
 			<div id="modalCadastro" class="modal fade" role="dialog">
-			  <div class="modal-dialog">
+				<div class="modal-dialog">
 
-   				 <!-- Modal content-->
-   			 	<div class="modal-content">
-     		 		<div class="modal-header">
-      		 		 <button type="button" class="close" data-dismiss="modal">&times;</button>
-      		  		 <h4 class="modal-title alinhacentro">Preencha o formulário para cadastrar-se</h4>
-    		    </div>
-     		    <div class="modal-body">
-      		      	<form class="form-horizontal">
-						<fieldset>
-						<!-- Text input-->
-						<div class="form-group">
-						  <label class="col-md-4 control-label" for="idNome">Nome</label>  
-						  <div class="col-md-5">
-						  <input ng-model="idNome" type="text" placeholder="Informe seu nome" class="form-control input-md" required/>
-						    
-						  </div>
+					<!-- Modal content-->
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+							<h4 class="modal-title alinhacentro">Preencha o formulário
+								para cadastrar-se</h4>
 						</div>
+						<div class="modal-body">
+							<form class="form-horizontal">
+								<fieldset>
+									<!-- Text input-->
+									<div class="form-group">
+										<label class="col-md-4 control-label" for="idNome">Nome</label>
+										<div class="col-md-5">
+											<input ng-model="idNome" type="text"
+												placeholder="Informe seu nome" class="form-control input-md"
+												required />
 
-						<!-- Text input-->
-						<div class="form-group">
-						  <label class="col-md-4 control-label" for="idUsuario">Usuário</label>  
-						  <div class="col-md-5">
-						  <input ng-model="idLogin" type="text" placeholder="Informe seu login" class="form-control input-md" required/>
-						    
-						  </div>
+										</div>
+									</div>
+
+									<!-- Text input-->
+									<div class="form-group">
+										<label class="col-md-4 control-label" for="idUsuario">Email</label>
+										<div class="col-md-5">
+											<input ng-model="idLogin" type="text"
+												placeholder="Informe seu login"
+												class="form-control input-md" required />
+
+										</div>
+									</div>
+
+									<!-- Password input-->
+									<div class="form-group">
+										<label class="col-md-4 control-label" for="idSenha">Senha</label>
+										<div class="col-md-5">
+											<input ng-model="idSenha" type="password"
+												placeholder="Informe sua senha"
+												class="form-control input-md" required />
+
+										</div>
+									</div>
+									
+									<!-- Password input-->
+									<div class="form-group">
+										<label class="col-md-4 control-label" for="idSenha2">Confirmar senha</label>
+										<div class="col-md-5">
+											<input ng-model="idSenha2" type="password"
+												placeholder="Informe sua senha novamente"
+												class="form-control input-md" required />
+
+										</div>
+									</div>
+
+									<!-- Button (Double) -->
+									<div class="form-group">
+										<label class="col-md-4 control-label" for="idConfirmar"></label>
+										<div class="col-md-8">
+											<button ng-disabled="!idNome || !idLogin || !idSenha || idSenha != idSenha2"
+												class="btn btn-primary"
+												ng-click="cadastraCliente(idNome,idLogin,idSenha)">Confirmar</button>
+										</div>
+									</div>
+
+								</fieldset>
+							</form>
+
 						</div>
-
-						<!-- Password input-->
-						<div class="form-group">
-						  <label class="col-md-4 control-label" for="idSenha">Senha</label>
-						  <div class="col-md-5">
-						    <input ng-model="idSenha" type="password" placeholder="Informe sua senha" class="form-control input-md" required/>
-						    
-						  </div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default"
+								data-dismiss="modal">Cancelar</button>
 						</div>
+					</div>
 
-						<!-- Button (Double) -->
-						<div class="form-group">
-						  <label class="col-md-4 control-label" for="idConfirmar"></label>
-						  <div class="col-md-8">
-						    <button ng-disabled="!idNome || !idLogin || !idSenha" class="btn btn-primary" ng-click="cadastraCliente(idNome,idLogin,idSenha)">Confirmar</button>
-						  </div>
-						</div>
-
-						</fieldset>
-						</form>
-
-      		    </div>
-      		    <div class="modal-footer">
-      		      <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-     		    </div>
-   		        </div>
-
-			  </div>
+				</div>
 			</div>
-	
+			
+			<!-- Modal Login -->
+			<div id="modalLogin" class="modal fade" role="dialog">
+				<div class="modal-dialog">
+
+					<!-- Modal content-->
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+							<h4 class="modal-title alinhacentro">Indique seu email e sua senha</h4>
+						</div>
+						<div class="modal-body">
+							<form class="form-horizontal">
+								<fieldset>
+
+									<!-- Text input-->
+									<div class="form-group">
+										<label class="col-md-4 control-label" for="idUsuario">Email</label>
+										<div class="col-md-5">
+											<input ng-model="idLoginLG" type="text"
+												placeholder="Informe seu login"
+												class="form-control input-md" required />
+
+										</div>
+									</div>
+
+									<!-- Password input-->
+									<div class="form-group">
+										<label class="col-md-4 control-label" for="idSenha">Senha</label>
+										<div class="col-md-5">
+											<input ng-model="idSenhaLG" type="password"
+												placeholder="Informe sua senha"
+												class="form-control input-md" required />
+
+										</div>
+									</div>
+									
+									<!-- Button (Double) -->
+									<div class="form-group">
+										<label class="col-md-4 control-label" for="idConfirmar"></label>
+										<div class="col-md-8">
+											<button ng-disabled="!idLoginLG || !idSenhaLG"
+												class="btn btn-primary"
+												ng-click="autenticarCliente(idLoginLG,idSenhaLG)">Entrar</button>
+										</div>
+									</div>
+
+								</fieldset>
+							</form>
+
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default"
+								data-dismiss="modal">Cancelar</button>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
 		</div>
 
 	</div>
-	
+
 </body>
 </html>

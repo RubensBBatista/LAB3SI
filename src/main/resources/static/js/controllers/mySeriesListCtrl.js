@@ -1,11 +1,11 @@
 angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$http,seriesAPI){
 	
 	$scope.series = [];
-	$scope.mySeries = [];
-	$scope.watchlist = [];
-	// variavel utilizada para saber se alguma serie foi pesquisada
 	$scope.searchState = "";
 	$scope.clientes = [];
+	$scope.userLogado;
+	$scope.mySeries = [];
+	$scope.watchlist = [];
 
 	$scope.getSeries = function(nome){
 		var promise = seriesAPI.getSeriesAPI(nome).then(function(response){
@@ -16,38 +16,45 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
 		})
 		return promise; 
 	};
-
-	$scope.addSerie = function(nomeserie){
-		if(!($scope.mySeriesContains(nomeserie))){
+	
+	$scope.addSerie = function(serie){
+		nomeserie = $scope.convertToAcceptAtt(serie);
+		if(contains($scope.mySeries,nomeserie) == -1){
 			var promise = seriesAPI.getFullSeriesAPI(nomeserie).then(function(response){
-     			$scope.mySeries.push(response.data);
+				var serieadd = $scope.convertToAcceptAtt(response.data);
+     			$scope.mySeries.push(serieadd);
+     			$scope.salvarNoPerfil(serieadd);
      		}).catch(function(error){
      			console.log(error);
      		});
 		}else{
 			alert("Não é possivel adicionar séries que você já possui no seu perfil!");
 		};
-		if(_.includes($scope.watchlist,nomeserie)){
-			var pos = $scope.watchlist.indexOf(nomeserie);
-			$scope.watchlist.splice(pos,1);
+		index_contains = contains($scope.watchlist,nomeserie);
+		if(index_contains != -1){
+			$scope.watchlist.splice(index_contains,1);
 		};
 		
 	};
 
 	$scope.mySerieRemove = function(serie){
-		var confirmacao = confirm("Tem certeza que deseja remover " + serie.Title + " do seu perfil?");
+		var confirmacao = confirm("Tem certeza que deseja remover " + serie.title + " do seu perfil?");
 		if(confirmacao){
 			var pos = $scope.mySeries.indexOf(serie);
 			$scope.mySeries.splice(pos,1);
+			$scope.removerDoPerfil(serie);
+			
 		};
 	};
 
-	$scope.watchlistAdd = function(nomeserie){
-		if($scope.mySeriesContains(nomeserie)){
+	$scope.watchlistAdd = function(serie){
+		nomeserie = $scope.convertToAcceptAtt(serie);
+		if(contains($scope.mySeries,nomeserie) != -1){
 			alert("Você não pode adicionar essa série na sua watchlist pois ela já está no seu perfil");
 		}else{
-			if(!(_.includes($scope.watchlist,nomeserie))){
+			if(contains($scope.watchlist,nomeserie) == -1){
 				$scope.watchlist.push(nomeserie);
+				$scope.salvarNaWatchList(nomeserie);
 			}else{
 				alert("Essa série já esta na sua Watchlist!");
 			};
@@ -55,22 +62,18 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
 		
 	};
 
-	$scope.watchlistRemove = function(serie){
-		var pos = $scope.watchlist.indexOf(serie);
-		$scope.watchlist.splice(pos,1);
-	};
-
 	$scope.pesquisado = function(){
 		return $scope.searchState === "Movie not found!";
 	};
 
-	$scope.mySeriesContains = function(serie){
-    	for (var i = 0; i < $scope.mySeries.length; i++) {
-     		if ($scope.mySeries[i].imdbID === serie.imdbID){
-        		return true;
+	var contains = function(array,nomeserie){
+		if(array == undefined) return false;
+    	for (var i = 0; i < array.length; i++) {
+     		if (array[i].imdbID === nomeserie.imdbID){
+        		return i;
        		}
     	}
-    	return false;
+    	return -1;
   	};
 
   	$scope.setMyRating = function(serie,nota){
@@ -79,6 +82,34 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
 
   	$scope.setLastEpisode = function(serie,ep){
   		serie.lastEpisode = ep;
+  	};
+  	
+  	$scope.hasLogado = function(){
+  		return $scope.userLogado != null;
+  	};
+  	
+  	$scope.deslogar = function(){
+  		$scope.userLogado = null;
+  		$scope.mySeries = [];
+  		$scope.watchlist = [];
+  	}
+  	
+  	$scope.autenticarCliente = function(idLogin,idSenha){
+  		$http({
+    	  	  method: 'POST',
+    	  	  url: 'http://localhost:8080/clientes/autenticar',
+    	  	  data: { login : idLogin , password : idSenha}	
+    	  	}).then(function successCallback(response) {
+    	  		if(response.data.nome == null){
+    	  			alert("Email ou senha incorretos");
+    	  		}else{
+    	  			$scope.userLogado = response.data;
+    	  			$scope.fillSeries();
+    	  			alert("Bem vindo " + response.data.nome + " :D");
+    	  		}
+    	  	  }, function errorCallback(response) {
+    	  		 console.log("Deu erro");
+    	  	  });
   	};
   	
   	var getClientes = function(){
@@ -105,9 +136,61 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
   	  	  });
   	};
   	
-  	getClientes();
+  	$scope.salvarNoPerfil = function(serie){
+  		$http({
+    	  	  method: 'POST',
+    	  	  url: 'http://localhost:8080/cliente/perfil/' + $scope.userLogado.id,
+    	  	  data: serie
+    	  	}).then(function successCallback(response) {
+    	  	  }, function errorCallback(response) {
+    	  		 console.log("Deu erro no perfil");
+    	  	  });
+  	}
   	
+  	$scope.salvarNaWatchList = function(serie){
+  		$http({
+  	  	  method: 'POST',
+  	  	  url: 'http://localhost:8080/cliente/watchlist/' + $scope.userLogado.id,
+  	  	  data: serie
+  	  	}).then(function successCallback(response) {
+  	  	  }, function errorCallback(response) {
+  	  		 console.log("Deu erro na watchlist");
+  	  	  });
+
+  	}
   	
+  	$scope.fillSeries = function(){
+  		if($scope.userLogado.meuPerfil != undefined){
+  			$scope.mySeries = angular.copy($scope.userLogado.meuPerfil);
+  		}
+  		if($scope.userLogado.watchlist != undefined){
+  			$scope.watchlist = angular.copy($scope.userLogado.watchlist);
+  		}
+  	}
+  	
+  	$scope.removerDoPerfil = function(serie){
+  		$http({
+  	  	  method: 'DELETE',
+  	  	  url: 'http://localhost:8080/cliente/removerPerfil/' + $scope.userLogado.id,
+  	  	  data: {imdbID: serie.imdbID}
+  	  	}).then(function successCallback(response) {
+  	  	  }, function errorCallback(response) {
+  	  		 console.log(serie);
+  	  		 console.log("Deu erro na remocao do perfil");
+  	  	  });
+
+  	}
+
+  	$scope.convertToAcceptAtt = function(serie){
+  		var retorno = {
+                 imdbRating: serie.imdbRating,
+                 title: serie.Title,
+                 rated: serie.Rated,
+                 poster: serie.Poster,
+                 imdbID: serie.imdbID
+  		};
+  		return retorno;
+  	}
   	
 
 });

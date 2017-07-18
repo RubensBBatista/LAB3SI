@@ -57,5 +57,14 @@ public class ClientController {
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);	
 		
 	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/clientes/autenticar", 
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Cliente> autenticarCliente(@RequestBody Cliente cliente) {
+		
+		return new ResponseEntity<>(clienteService.autenticaUser(cliente), HttpStatus.OK);
+
+	}
 
 }

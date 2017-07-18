@@ -1,6 +1,7 @@
 package br.com.suaserie.ws.service;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,5 +45,18 @@ public class ClienteService {
 		return new Cliente();
 		
 	}
+	
+	
+	
+	public Cliente autenticaUser(Cliente cliente) {
+		List<Cliente> clientes = clienteRepository.findAll();
+		for(Cliente c : clientes) {
+			if(c.getLogin().equals(cliente.getLogin()) && c.getPassword().equals(cliente.getPassword()))
+				return c;
+		}
+		return new Cliente();
+	}
+
+	
 
 }
