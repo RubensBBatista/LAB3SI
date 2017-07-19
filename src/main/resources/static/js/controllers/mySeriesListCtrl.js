@@ -6,6 +6,14 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
 	$scope.userLogado;
 	$scope.mySeries = [];
 	$scope.watchlist = [];
+	
+	//para resetar o modal
+	
+	$('#modalCadastro').on('hidden.bs.modal', function(){
+		$(this).find('form').trigger('reset');
+		$('#modalLogin').find('form').trigger('reset');
+
+		})
 
 	$scope.getSeries = function(nome){
 		var promise = seriesAPI.getSeriesAPI(nome).then(function(response){
@@ -122,8 +130,6 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
   		return $scope.watchlist.length > 0;
   	}
   	
-  	
-  	
   	$scope.autenticarCliente = function(idLogin,idSenha){
   		$http({
     	  	  method: 'POST',
@@ -142,25 +148,14 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
     	  	  });
   	};
   	
-  	var getClientes = function(){
-  		$http({
-  	  	  method: 'GET',
-  	  	  url: 'http://localhost:8080/clientes'
-  	  	}).then(function successCallback(response) {
-  	  		$scope.clientes = response.data;
-  	  		console.log(response.data);
-  	  	  }, function errorCallback(response) {
-  	  		console.log("Deu erro");
-  	  	  });
-  	};
-  	
   	$scope.cadastraCliente = function(idNome,idLogin,idSenha){
   		$http({
   	  	  method: 'POST',
   	  	  url: 'http://localhost:8080/clientes',
   	  	  data: { nome : idNome, login : idLogin , password : idSenha}	
   	  	}).then(function successCallback(response) {
-  	  		console.log(response.data);
+  	  		$scope.autenticarCliente(idLogin,idSenha);
+  	  		alert("Cliente cadastrado com sucesso");
   	  	  }, function errorCallback(response) {
   	  		 console.log("Deu erro");
   	  	  });
@@ -221,19 +216,7 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
   	  	  });
 
   	}
-  	
-  	$scope.removerCliente = function(id){
-  		$http({
-  	  	  method: 'DELETE',
-  	  	  url: 'http://localhost:8080/clientes/' + id,
-  	  	}).then(function successCallback(response) {
-  	  	  }, function errorCallback(response) {
-  	  		 console.log("Deu erro na remocao do perfil");
-  	  	  });
-
-  	}
-
-  	
+ 	
   	$scope.convertToAcceptAtt = function(serie){
   		var retorno = {
                  imdbRating: serie.imdbRating,

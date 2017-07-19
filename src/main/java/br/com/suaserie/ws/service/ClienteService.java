@@ -1,6 +1,5 @@
 package br.com.suaserie.ws.service;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,23 +16,16 @@ public class ClienteService {
 
 	public Cliente cadastrar(Cliente cliente) {
 		
-		return clienteRepository.save(cliente);
-	}
-
-	public Collection<Cliente> getClientes() {
-		
-		return clienteRepository.findAll();
+		return clienteRepository.save(cliente);			
 	}
 	
-	public boolean remover(Long id) {
-		
-		if(clienteRepository.exists(id)) {
-			clienteRepository.delete(id);	
-			return true;
+	public Cliente getClientePorEmail(Cliente cliente){
+		List<Cliente> clientes = clienteRepository.findAll();
+		for(Cliente c : clientes) {
+			if(c.getLogin().equals(cliente.getLogin()))
+				return c;
 		}
-		return false;
-		
-		
+		return new Cliente();
 	}
 
 	public Cliente getClientesPorId(Long id) {
@@ -46,13 +38,10 @@ public class ClienteService {
 		
 	}
 	
-	
-	
 	public Cliente autenticaUser(Cliente cliente) {
-		List<Cliente> clientes = clienteRepository.findAll();
-		for(Cliente c : clientes) {
-			if(c.getLogin().equals(cliente.getLogin()) && c.getPassword().equals(cliente.getPassword()))
-				return c;
+		Cliente comparado = getClientePorEmail(cliente);
+		if(comparado.getLogin() != null && comparado.getPassword().equals(cliente.getPassword())){
+			return comparado;
 		}
 		return new Cliente();
 	}
