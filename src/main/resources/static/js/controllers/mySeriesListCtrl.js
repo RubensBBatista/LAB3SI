@@ -2,7 +2,6 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
 	
 	$scope.series = [];
 	$scope.searchState = "";
-	$scope.clientes = [];
 	$scope.userLogado;
 	$scope.mySeries = [];
 	$scope.watchlist = [];
@@ -21,6 +20,8 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
 
 		});
 
+	//requisicoes na API do IMDB
+	
 	$scope.getSeries = function(nome){
 		var promise = seriesAPI.getSeriesAPI(nome).then(function(response){
 			$scope.series = response.data.Search;
@@ -61,82 +62,10 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
 		};
 		
 	};
-
-	$scope.mySerieRemove = function(serie){
-		var confirmacao = confirm("Tem certeza que deseja remover " + serie.title + " do seu perfil?");
-		if(confirmacao){
-			var pos = $scope.mySeries.indexOf(serie);
-			$scope.mySeries.splice(pos,1);
-			$scope.removerDoPerfil(serie);
-		};
-	};
 	
-	$scope.watchlistAdd = function(serie){
-		if(!$scope.hasLogado()){
-			alert("Você precisa estar logado para adicionar séries a sua watchlist!");
-		}else{
-			$scope.addToWatchlist(serie);
-		}
-	}
-
-	$scope.addToWatchlist = function(serie){
-		nomeserie = $scope.convertToAcceptAtt(serie);
-		if(contains($scope.mySeries,nomeserie) != -1){
-			alert("Você não pode adicionar essa série na sua watchlist pois ela já está no seu perfil");
-		}else{
-			if(contains($scope.watchlist,nomeserie) == -1){
-				$scope.watchlist.push(nomeserie);
-				$scope.salvarNaWatchList(nomeserie);
-			}else{
-				alert("Essa série já esta na sua Watchlist!");
-			};
-		};
-		
-	};
-
-	$scope.pesquisado = function(){
-		return $scope.searchState === "Movie not found!";
-	};
-
-	var contains = function(array,nomeserie){
-		if(array == undefined) return false;
-    	for (var i = 0; i < array.length; i++) {
-     		if (array[i].imdbID === nomeserie.imdbID){
-        		return i;
-       		}
-    	}
-    	return -1;
-  	};
-
-  	$scope.setMyRating = function(serie,nota){
-  		serie.myRating = nota;
-  		$scope.salvarNoPerfil(serie);
-  	};
-
-  	$scope.setLastEpisode = function(serie,ep){
-  		serie.lastEpisode = ep;
-  		$scope.salvarNoPerfil(serie);
-  	};
-  	
-  	$scope.hasLogado = function(){
-  		return $scope.userLogado != null;
-  	};
-  	
-  	$scope.deslogar = function(){
-  		$scope.userLogado = null;
-  		$scope.mySeries = [];
-  		$scope.watchlist = [];
-  	};
-  	
- 	$scope.hasSeriesOnPerf = function(){
-  		return $scope.mySeries.length > 0;
-  	}
-  	
-  	$scope.hasSeriesOnWatch = function(){
-  		return $scope.watchlist.length > 0;
-  	}
-  	
-  	$scope.autenticarCliente = function(idLogin,idSenha){
+	//API REST - Requisicoes
+	
+	$scope.autenticarCliente = function(idLogin,idSenha){
   		$http({
     	  	  method: 'POST',
     	  	  url: 'http://localhost:8080/clientes/autenticar',
@@ -189,16 +118,7 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
   	  	  });
 
   	}
-  	
-  	$scope.fillSeries = function(){
-  		if($scope.userLogado.meuPerfil != undefined){
-  			$scope.mySeries = angular.copy($scope.userLogado.meuPerfil);
-  		}
-  		if($scope.userLogado.watchlist != undefined){
-  			$scope.watchlist = angular.copy($scope.userLogado.watchlist);
-  		}
-  	}
-  	
+	
   	$scope.removerDoPerfil = function(serie){
   		$http({
   	  	  method: 'DELETE',
@@ -222,6 +142,95 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
   	  	  });
 
   	}
+  	
+  	//outros metodos
+  	
+  	$scope.watchlistAdd = function(serie){
+		if(!$scope.hasLogado()){
+			alert("Você precisa estar logado para adicionar séries a sua watchlist!");
+		}else{
+			$scope.addToWatchlist(serie);
+		}
+	}
+
+	$scope.addToWatchlist = function(serie){
+		nomeserie = $scope.convertToAcceptAtt(serie);
+		if(contains($scope.mySeries,nomeserie) != -1){
+			alert("Você não pode adicionar essa série na sua watchlist pois ela já está no seu perfil");
+		}else{
+			if(contains($scope.watchlist,nomeserie) == -1){
+				$scope.watchlist.push(nomeserie);
+				$scope.salvarNaWatchList(nomeserie);
+			}else{
+				alert("Essa série já esta na sua Watchlist!");
+			};
+		};
+		
+	};
+
+	$scope.mySerieRemove = function(serie){
+		var confirmacao = confirm("Tem certeza que deseja remover " + serie.title + " do seu perfil?");
+		if(confirmacao){
+			var pos = $scope.mySeries.indexOf(serie);
+			$scope.mySeries.splice(pos,1);
+			$scope.removerDoPerfil(serie);
+		};
+	};
+	
+	$scope.pesquisado = function(){
+		return $scope.searchState === "Movie not found!";
+	};
+
+	var contains = function(array,nomeserie){
+		if(array == undefined) return false;
+    	for (var i = 0; i < array.length; i++) {
+     		if (array[i].imdbID === nomeserie.imdbID){
+        		return i;
+       		}
+    	}
+    	return -1;
+  	};
+
+  	$scope.setMyRating = function(serie,nota){
+  		serie.myRating = nota;
+  		$scope.salvarNoPerfil(serie);
+  	};
+
+  	$scope.setLastEpisode = function(serie,ep){
+  		serie.lastEpisode = ep;
+  		$scope.salvarNoPerfil(serie);
+  	};
+  	
+  	$scope.hasLogado = function(){
+  		return $scope.userLogado != null;
+  	};
+  	
+  	$scope.deslogar = function(){
+  		$scope.userLogado = null;
+  		$scope.mySeries = [];
+  		$scope.watchlist = [];
+  	};
+  	
+ 	$scope.hasSeriesOnPerf = function(){
+  		return $scope.mySeries.length > 0;
+  	}
+  	
+  	$scope.hasSeriesOnWatch = function(){
+  		return $scope.watchlist.length > 0;
+  	}
+  	
+  	// Enche os arryas com as series do usuario logado
+  	
+  	$scope.fillSeries = function(){
+  		if($scope.userLogado.meuPerfil != undefined){
+  			$scope.mySeries = angular.copy($scope.userLogado.meuPerfil);
+  		}
+  		if($scope.userLogado.watchlist != undefined){
+  			$scope.watchlist = angular.copy($scope.userLogado.watchlist);
+  		}
+  	}
+  	
+  	//converter serie para que tenha somente os atributos da entidade Serie no model
  	
   	$scope.convertToAcceptAtt = function(serie){
   		var retorno = {
