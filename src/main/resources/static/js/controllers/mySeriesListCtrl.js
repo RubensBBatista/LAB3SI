@@ -13,7 +13,13 @@ angular.module("mySeriesList").controller("mySeriesListCtrl",function($scope,$ht
 		$(this).find('form').trigger('reset');
 		$('#modalLogin').find('form').trigger('reset');
 
-		})
+		});
+	
+	$('#modalLogin').on('hidden.bs.modal', function(){
+		$(this).find('form').trigger('reset');
+		$('#modalCadastro').find('form').trigger('reset');
+
+		});
 
 	$scope.getSeries = function(nome){
 		var promise = seriesAPI.getSeriesAPI(nome).then(function(response){
